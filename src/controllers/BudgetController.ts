@@ -4,8 +4,10 @@ import Expense from "../models/Expense";
 
 export class BudgetsController {
   static getAll = async (req: Request, res: Response) => {
-    const budgets = await Budget.findAll();
-    // TODO: Traer todos los presupuesto por usuario autenticado
+    const budgets = await Budget.findAll({
+      // TODO: Traer todos los presupuesto por usuario autenticado
+      where: { userID: req.user.id },
+    });
     res.status(200).json({ budgets });
   };
 
@@ -15,6 +17,7 @@ export class BudgetsController {
       const budget = await Budget.findByPk(req.budget.id, {
         include: [Expense],
       });
+
       res.status(200).json({ budget });
     } catch (error) {
       res.status(500).json({ message: "Error al obtener los gastos" });
@@ -23,9 +26,12 @@ export class BudgetsController {
 
   static create = async (req: Request, res: Response) => {
     try {
-      await Budget.create(req.body);
-      res.status(201).json({ message: "Nuevo presupuesto creado" });
-      return;
+      const budget = new Budget(req.body);
+      if (typeof req.user === "object" && req.user.id) {
+        budget.userID = req.user.id;
+        await budget.save();
+        res.status(201).json({ message: "Nuevo presupuesto creado" });
+      }
     } catch (error) {
       res.status(500).json({ message: "Error al crear el registro" });
     }

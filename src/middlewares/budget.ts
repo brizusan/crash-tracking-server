@@ -73,3 +73,16 @@ export const validateBudgetInput = async (
     .run(req);
   next();
 };
+
+export const hasValidAccess = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (req.user.id !== req.budget.userID) {
+    res.status(401).json({ message: "No autorizado , no tienes acceso" });
+    return;
+  }
+
+  next();
+};

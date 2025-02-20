@@ -161,4 +161,24 @@ export class AuthController {
       res.status(500).json({ message: "Error al realizar la peticion" });
     }
   };
+
+  static checkPassword = async (req: Request, res: Response) => {
+    const { password } = req.body;
+
+    try {
+      if (typeof req.user === "object" && req.user.id) {
+        const user = await User.findByPk(req.user.id);
+
+        const validatePassword = await comparePassword(password, user.password);
+        if (!validatePassword) {
+          res.status(401).json({ message: "Contraseña no valida" });
+          return;
+        }
+
+        res.status(200).json({ message: "Contraseña valida" });
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Error al realizar la peticion" });
+    }
+  };
 }

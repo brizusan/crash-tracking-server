@@ -1,7 +1,9 @@
 import { Router } from "express";
 import { BudgetsController } from "../controllers/BudgetController";
 import { ExpenseController } from "../controllers/ExpenseController";
+import { authValidateJWT } from "../middlewares/auth";
 import {
+  hasValidAccess,
   validateBudgetExist,
   validateBudgetID,
   validateBudgetInput,
@@ -15,9 +17,13 @@ import { validationErrors } from "../middlewares/validation";
 
 const router: Router = Router();
 
+router.use(authValidateJWT);
+
 // Middlewares cada que tengamos un parametro budgetID
 router.param("budgetID", validateBudgetID);
 router.param("budgetID", validateBudgetExist);
+router.param("budgetID", hasValidAccess);
+
 router.param("expenseId", validateExpenseID);
 router.param("expenseId", validateExpenseExist);
 
