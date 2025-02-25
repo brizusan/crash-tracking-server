@@ -31,9 +31,9 @@ router.post(
   AuthController.createAccount
 );
 
-router.get(
-  "/confirm-account/:token",
-  param("token")
+router.post(
+  "/confirm-account",
+  body("token")
     .notEmpty()
     .withMessage("El token es requerido")
     .isNumeric()

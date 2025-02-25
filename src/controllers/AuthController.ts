@@ -12,7 +12,7 @@ export class AuthController {
       const user = await User.findOne({ where: { email } });
       if (user) {
         res
-          .status(400)
+          .status(409)
           .json({ message: "Tenemos un usuario asociado a este email" });
         return;
       }
@@ -20,16 +20,14 @@ export class AuthController {
       const token = generateToken();
       await User.create({ name, password: passwordValidate, email, token });
       await AuthEmail.sendConfirmEmail({ name, email, token });
-      res
-        .status(201)
-        .json({ message: "Nuevo usuario creado , revisa tu correo" });
+      res.status(201).json({ message: "Cuenta registrada , revisa tu correo" });
     } catch (error) {
       res.status(500).json({ message: "Error al crear el registro" });
     }
   };
 
   static confirmAccount = async (req: Request, res: Response) => {
-    const { token } = req.params;
+    const { token } = req.body;
     try {
       const user = await User.findOne({ where: { token } });
       if (!user) {
@@ -39,7 +37,9 @@ export class AuthController {
       user.token = null;
       user.confirmed = true;
       await user.save();
-      res.status(200).json({ message: "Cuenta confirmada" });
+      res
+        .status(200)
+        .json({ message: "Cuenta confirmada , puedes iniciar sesion" });
     } catch (error) {
       res.status(500).json({ message: "Error al realizar la peticion" });
     }
@@ -73,8 +73,10 @@ export class AuthController {
 
       // TODO: generar token JWT y devolverlo
       const userJWT = generateJWT({ id: user.id, email: user.email });
-      res.status(200).json({ message: "Credenciales validas", token: userJWT });
-    } catch (error) {}
+      res.status(200).json({ message: "Iniciando Sesión", token: userJWT });
+    } catch (error) {
+      res.status(500).json({ message: "Error al realizar la peticion" });
+    }
   };
 
   static forgotPassword = async (req: Request, res: Response) => {

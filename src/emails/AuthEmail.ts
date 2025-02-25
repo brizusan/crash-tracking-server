@@ -48,10 +48,17 @@ export class AuthEmail {
               font-size: 0.8rem;
               font-family: sans-serif;
             "
-            href="http://localhost:4000/confirm-account/${token}"
+            href="${process.env.FRONTEND_URL}/auth/confirm-account"
             target="_blank"
             >Activar Cuenta</a>
         </p>
+        <h2 style="
+            color:rgba(5, 47, 132, 0.89);
+            font-size: 1.25rem;
+            font-weight: 700;
+        ">Ingresa el siguiente codigo : <span style="
+            color:rgba(132, 5, 43, 0.89);
+        ">${token}</span></h2>
         <p
           style="
             color:rgba(206, 26, 26, 0.87);
@@ -113,7 +120,7 @@ export class AuthEmail {
               font-size: 0.8rem;
               font-family: sans-serif;
             "
-            href="http://localhost:4000/reset-password/${token}"
+            href="${process.env.FRONTEND_URL}/auth/reset-password"
             target="_blank"
             >Reset Password</a>
         </p>
