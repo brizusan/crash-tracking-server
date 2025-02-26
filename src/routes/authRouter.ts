@@ -119,4 +119,19 @@ router.post(
   AuthController.checkPassword
 );
 
+// Actualizar informacion de usuario
+
+router.patch(
+  "/user",
+  authValidateJWT,
+  body("name").notEmpty().withMessage("El campo name es obligatorio"),
+  body("email")
+    .notEmpty()
+    .withMessage("El email es obligatorio")
+    .isEmail()
+    .withMessage("Email no valido"),
+  validationErrors,
+  AuthController.updateUser
+);
+
 export default router;

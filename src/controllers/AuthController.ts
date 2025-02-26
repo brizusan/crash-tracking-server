@@ -183,4 +183,24 @@ export class AuthController {
       res.status(500).json({ message: "Error al realizar la peticion" });
     }
   };
+
+  static updateUser = async (req: Request, res: Response) => {
+    const { name, email } = req.body;
+
+    try {
+      const userExist = await User.findOne({ where: { email } });
+      if (userExist) {
+        res.status(404).json({ message: "El email ya esta registrado" });
+        return;
+      }
+
+      const user = await User.findByPk(req.user.id);
+      user.name = name;
+      user.email = email;
+      await user.save();
+      res.status(200).json({ message: "Usuario actualizado correctamente" });
+    } catch (error) {
+      res.status(500).json({ message: "Error al realizar la peticion" });
+    }
+  };
 }
